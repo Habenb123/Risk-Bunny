@@ -327,7 +327,7 @@ print("Primes up to 50:", find_primes_up_to(50))
             "executive_summary": "Transaction velocity shows healthy weekday stability with recurring weekend volatility. Periodic failure spikes correlate with gateway downtime and unverified user activity spikes."
         }
 
-    elif any(k in q for k in ["top merchant", "merchant count", "highest chargeback", "highest dispute"]):
+    elif any(k in q for k in ["top merchant", "merchant count", "highest chargeback", "highest dispute", "merchant"]):
         return {
             "sql_query": """
                 SELECT 
@@ -337,7 +337,7 @@ print("Primes up to 50:", find_primes_up_to(50))
                     COALESCE(dm.merchant_status_clean, 'ACTIVE') AS status
                 FROM fact_chargebacks fc
                 LEFT JOIN dim_merchants dm ON fc.merchant_id = dm.merchant_id
-                GROUP BY merchant_name, status
+                GROUP BY 1, 4
                 ORDER BY dispute_count DESC
                 LIMIT 10
             """,
@@ -358,7 +358,7 @@ print("Primes up to 50:", find_primes_up_to(50))
                     COALESCE(dc.risk_segment_clean, 'UNKNOWN') AS risk_segment
                 FROM fact_chargebacks fc
                 LEFT JOIN dim_customers dc ON fc.user_id = dc.user_id
-                GROUP BY customer_name, risk_segment
+                GROUP BY 1, 4
                 ORDER BY total_disputed_value DESC
                 LIMIT 10
             """,
